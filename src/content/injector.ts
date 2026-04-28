@@ -28,9 +28,11 @@ export function getCaretIndex(detected: DetectedElement): number {
 }
 
 export function getCaretRect(detected: DetectedElement): DOMRect {
-  const sel = window.getSelection()
-  if (sel && sel.rangeCount > 0 && detected.type !== 'generic') {
-    return sel.getRangeAt(0).getBoundingClientRect()
+  if (detected.type === 'slate' || detected.type === 'contenteditable') {
+    const sel = window.getSelection()
+    if (sel && sel.rangeCount > 0) {
+      return sel.getRangeAt(0).getBoundingClientRect()
+    }
   }
   return detected.el.getBoundingClientRect()
 }
@@ -45,7 +47,7 @@ export function inject(
     injectSlate(detected.el as HTMLElement, atIndex, caretIndex, value)
   } else if (detected.type === 'contenteditable') {
     injectContentEditable(detected.el as HTMLElement, atIndex, caretIndex, value)
-  } else if (detected.type === 'react-textarea') {
+  } else if (detected.type === 'react-textarea' || detected.type === 'comfyui') {
     injectReactTextarea(detected.el as HTMLTextAreaElement, atIndex, caretIndex, value)
   } else {
     injectGeneric(detected.el as HTMLInputElement | HTMLTextAreaElement, atIndex, caretIndex, value)

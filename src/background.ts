@@ -34,7 +34,7 @@ chrome.runtime.onInstalled.addListener(async ({ reason }) => {
       },
     ],
     activeBrandId: id,
-    allowedDomains: ["dream.ai", "lumalabs.ai", "localhost", "127.0.0.1"],
+    allowedDomains: ["dream.ai", "lumalabs.ai", "localhost", "127.0.0.1", "comfy.org", "midjourney.com"],
   });
 });
 

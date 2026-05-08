@@ -10,13 +10,14 @@ const SELECTORS = [
 
 export interface DetectedElement {
   el: TargetElement
-  type: 'slate' | 'react-textarea' | 'comfyui' | 'contenteditable' | 'generic'
+  type: 'slate' | 'react-textarea' | 'comfyui' | 'midjourney' | 'contenteditable' | 'generic'
 }
 
 function classify(el: Element): DetectedElement['type'] {
   if ((el as HTMLElement).dataset['slateEditor'] === 'true') return 'slate'
   if (el.tagName === 'TEXTAREA' && el.closest('.bg-panel')) return 'react-textarea'
   if (el.tagName === 'TEXTAREA' && (el as HTMLElement).hasAttribute('data-capture-wheel')) return 'comfyui'
+  if (el.tagName === 'TEXTAREA' && (el as HTMLElement).id === 'desktop_input_bar') return 'midjourney'
   if ((el as HTMLElement).contentEditable === 'true') return 'contenteditable'
   return 'generic'
 }

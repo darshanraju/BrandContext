@@ -47,7 +47,7 @@ export function inject(
     injectSlate(detected.el as HTMLElement, atIndex, caretIndex, value)
   } else if (detected.type === 'contenteditable') {
     injectContentEditable(detected.el as HTMLElement, atIndex, caretIndex, value)
-  } else if (detected.type === 'react-textarea' || detected.type === 'comfyui') {
+  } else if (detected.type === 'react-textarea' || detected.type === 'comfyui' || detected.type === 'midjourney') {
     injectReactTextarea(detected.el as HTMLTextAreaElement, atIndex, caretIndex, value)
   } else {
     injectGeneric(detected.el as HTMLInputElement | HTMLTextAreaElement, atIndex, caretIndex, value)

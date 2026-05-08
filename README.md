@@ -27,7 +27,7 @@ The BrandKey icon will appear in your toolbar.
 
 1. Click the extension icon → open the editor via **Open editor**
 2. Create a brand and add `@key` → `value` shortcuts (e.g. `tone` → `cinematic, minimal, editorial`)
-3. Go to **Sites** and add the domains where you want the extension active (e.g. `lumalabs.ai`)
+3. Go to **Sites** and add the domains where you want the extension active (e.g. `midjourney.com`, `comfy.org`)
 4. Navigate to an allowed site, click into any AI prompt field, and type `@` — a dropdown will autocomplete your shortcuts
 
 ## Development

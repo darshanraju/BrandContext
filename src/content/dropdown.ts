@@ -1,26 +1,26 @@
-import type { Shortcut } from '../shared/types'
-import { isHexColor } from '../shared/colorDetect'
+import type { Shortcut } from "../shared/types";
+import { isHexColor } from "../shared/colorDetect";
 
-const DROPDOWN_ID = 'bk-dropdown'
-let currentOnSelect: ((s: Shortcut) => void) | null = null
-let items: Shortcut[] = []
-let selectedIndex = 0
+const DROPDOWN_ID = "bk-dropdown";
+let currentOnSelect: ((s: Shortcut) => void) | null = null;
+let items: Shortcut[] = [];
+let selectedIndex = 0;
 
 function getOrCreate(): HTMLDivElement {
-  let el = document.getElementById(DROPDOWN_ID) as HTMLDivElement | null
+  let el = document.getElementById(DROPDOWN_ID) as HTMLDivElement | null;
   if (!el) {
-    el = document.createElement('div')
-    el.id = DROPDOWN_ID
-    injectStyles()
-    document.body.appendChild(el)
+    el = document.createElement("div");
+    el.id = DROPDOWN_ID;
+    injectStyles();
+    document.body.appendChild(el);
   }
-  return el
+  return el;
 }
 
 function injectStyles() {
-  if (document.getElementById('bk-styles')) return
-  const style = document.createElement('style')
-  style.id = 'bk-styles'
+  if (document.getElementById("bk-styles")) return;
+  const style = document.createElement("style");
+  style.id = "bk-styles";
   style.textContent = `
     #bk-dropdown {
       position: fixed; z-index: 2147483647; width: 280px;
@@ -61,57 +61,62 @@ function injectStyles() {
     .bk-hint kbd {
       background: #F2F2F2; color: #888; border-radius: 3px; padding: 1px 4px; font-family: inherit;
     }
-  `
-  document.head.appendChild(style)
+  `;
+  document.head.appendChild(style);
 }
 
 function render(el: HTMLDivElement) {
   el.innerHTML = `
     <div class="bk-list">
-      ${items.map((s, i) => `
-        <div class="bk-item${i === selectedIndex ? ' bk-active' : ''}" data-index="${i}">
+      ${items
+        .map(
+          (s, i) => `
+        <div class="bk-item${i === selectedIndex ? " bk-active" : ""}" data-index="${i}">
           <span class="bk-key">@${s.key}</span>
-          ${isHexColor(s.value) ? `<div class="bk-swatch" style="background:${s.value}"></div>` : ''}
+          ${isHexColor(s.value) ? `<div class="bk-swatch" style="background:${s.value}"></div>` : ""}
           <span class="bk-val">${s.value}</span>
         </div>
-      `).join('')}
+      `,
+        )
+        .join("")}
     </div>
     <div class="bk-hint">
       <span><kbd>↑↓</kbd> navigate</span>
       <span><kbd>↵</kbd> insert</span>
       <span><kbd>Esc</kbd> close</span>
     </div>
-  `
+  `;
 
-  el.querySelectorAll<HTMLElement>('.bk-item').forEach((row, i) => {
-    row.addEventListener('mousedown', (e) => {
-      e.preventDefault()
-      select(i)
-    })
-  })
+  el.querySelectorAll<HTMLElement>(".bk-item").forEach((row, i) => {
+    row.addEventListener("mousedown", (e) => {
+      e.preventDefault();
+      select(i);
+    });
+  });
 }
 
 function scrollActiveIntoView(el: HTMLDivElement) {
-  const list = el.querySelector<HTMLElement>('.bk-list')
-  const active = el.querySelector<HTMLElement>('.bk-item.bk-active')
-  if (list && active) active.scrollIntoView({ block: 'nearest' })
+  const list = el.querySelector<HTMLElement>(".bk-list");
+  const active = el.querySelector<HTMLElement>(".bk-item.bk-active");
+  if (list && active) active.scrollIntoView({ block: "nearest" });
 }
 
 function position(el: HTMLDivElement, anchorRect: DOMRect) {
-  const GAP = 4
-  const dropH = Math.min(items.length * 28 + 32, 256)
-  const spaceBelow = window.innerHeight - anchorRect.bottom
-  const top = spaceBelow >= dropH + GAP
-    ? anchorRect.bottom + GAP
-    : anchorRect.top - dropH - GAP
-  el.style.top = `${top + window.scrollY}px`
-  el.style.left = `${Math.min(anchorRect.left, window.innerWidth - 300)}px`
+  const GAP = 4;
+  const dropH = Math.min(items.length * 28 + 32, 256);
+  const spaceBelow = window.innerHeight - anchorRect.bottom;
+  const top =
+    spaceBelow >= dropH + GAP
+      ? anchorRect.bottom + GAP
+      : anchorRect.top - dropH - GAP;
+  el.style.top = `${top + window.scrollY}px`;
+  el.style.left = `${Math.min(anchorRect.left, window.innerWidth - 300)}px`;
 }
 
 function select(index: number) {
-  const shortcut = items[index]
-  if (shortcut && currentOnSelect) currentOnSelect(shortcut)
-  hide()
+  const shortcut = items[index];
+  if (shortcut && currentOnSelect) currentOnSelect(shortcut);
+  hide();
 }
 
 export function show(
@@ -119,33 +124,37 @@ export function show(
   anchorRect: DOMRect,
   onSelect: (s: Shortcut) => void,
 ): void {
-  items = shortcuts
-  selectedIndex = 0
-  currentOnSelect = onSelect
-  const el = getOrCreate()
-  el.style.display = 'block'
-  render(el)
-  position(el, anchorRect)
+  items = shortcuts;
+  selectedIndex = 0;
+  currentOnSelect = onSelect;
+  // Returns the new DOM node to render the dropdown in. Creates if doesn't exist
+  const el = getOrCreate();
+  el.style.display = "block";
+  render(el);
+  position(el, anchorRect);
 }
 
 export function hide(): void {
-  const el = document.getElementById(DROPDOWN_ID)
-  if (el) el.style.display = 'none'
-  currentOnSelect = null
+  const el = document.getElementById(DROPDOWN_ID);
+  if (el) el.style.display = "none";
+  currentOnSelect = null;
 }
 
 export function isVisible(): boolean {
-  const el = document.getElementById(DROPDOWN_ID)
-  return el !== null && el.style.display !== 'none'
+  const el = document.getElementById(DROPDOWN_ID);
+  return el !== null && el.style.display !== "none";
 }
 
 export function moveSelection(delta: 1 | -1): void {
-  if (!items.length) return
-  selectedIndex = (selectedIndex + delta + items.length) % items.length
-  const el = document.getElementById(DROPDOWN_ID) as HTMLDivElement | null
-  if (el) { render(el); scrollActiveIntoView(el) }
+  if (!items.length) return;
+  selectedIndex = (selectedIndex + delta + items.length) % items.length;
+  const el = document.getElementById(DROPDOWN_ID) as HTMLDivElement | null;
+  if (el) {
+    render(el);
+    scrollActiveIntoView(el);
+  }
 }
 
 export function confirmSelection(): void {
-  select(selectedIndex)
+  select(selectedIndex);
 }

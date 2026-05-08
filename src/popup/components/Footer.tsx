@@ -1,19 +1,28 @@
-import { useState, useEffect } from 'react'
-import { ExternalLinkIcon, SettingsIcon } from '../../shared/icons'
+import { useState, useEffect } from "react";
+import { ExternalLinkIcon, SettingsIcon } from "../../shared/icons";
 
-interface Props { allowedDomains: string[] }
+interface Props {
+  allowedDomains: string[];
+}
 
 export function Footer({ allowedDomains }: Props) {
-  const [hostname, setHostname] = useState<string | null>(null)
+  const [hostname, setHostname] = useState<string | null>(null);
 
+  // Get the hostname of the current tab
   useEffect(() => {
-    chrome.tabs.query({ active: true, currentWindow: true }).then(tabs => {
-      const url = tabs[0]?.url
-      if (url) { try { setHostname(new URL(url).hostname) } catch {} }
-    })
-  }, [])
+    chrome.tabs.query({ active: true, currentWindow: true }).then((tabs) => {
+      const url = tabs[0]?.url;
+      if (url) {
+        try {
+          setHostname(new URL(url).hostname);
+        } catch {}
+      }
+    });
+  }, []);
 
-  const isActive = hostname !== null && allowedDomains.some(d => hostname === d || hostname.endsWith('.' + d))
+  const isActive =
+    hostname !== null &&
+    allowedDomains.some((d) => hostname === d || hostname.endsWith("." + d));
 
   return (
     <div className="popup-footer">
@@ -26,15 +35,23 @@ export function Footer({ allowedDomains }: Props) {
         )}
       </div>
       <div className="footer-actions">
-        <button className="btn-footer" onClick={() => chrome.runtime.openOptionsPage()}>
+        {/* Opens the options page */}
+        <button
+          className="btn-footer"
+          onClick={() => chrome.runtime.openOptionsPage()}
+        >
           <SettingsIcon size={12} />
           Sites
         </button>
-        <button className="btn-footer accent" onClick={() => chrome.runtime.openOptionsPage()}>
+        {/* Opens the options page */}
+        <button
+          className="btn-footer accent"
+          onClick={() => chrome.runtime.openOptionsPage()}
+        >
           <ExternalLinkIcon size={12} />
           Open editor
         </button>
       </div>
     </div>
-  )
+  );
 }
